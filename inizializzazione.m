@@ -40,7 +40,7 @@ Q3=0;
 
 x_start=[T1 T2 T3 Q1 Q2 Q3]';
 
-% Condizioni Obbiettivo
+% Condizioni Obbiettivo 
 
 x_ref=[289 289 289 100 100 100]';
 u_ref=[100 100 100]';       %????? PERCHEEE ??????
@@ -121,5 +121,105 @@ disp(eig(A_lin))
 
 
 %% 3.DISCRETIZZAZIONE DEL SISTEMA
+
+% Parametri di discretizzazione
+Ts = 60;  % Periodo di campionamento in secondi (1 minuto)
+
+% Discretizzazione del sistema lineare usando metodo zero-order hold
+sys_discreto = c2d(sys_lineare, Ts, 'zoh');
+
+% Estrazione delle matrici del sistema discreto
+A_d = sys_discreto.A;
+B_d = sys_discreto.B;
+C_d = sys_discreto.C;
+D_d = sys_discreto.D;
+
+% Verifica della stabilità del sistema discreto
+autovalori_discreti = eig(A_d);
+disp("Autovalori della matrice A discreta:")
+disp(autovalori_discreti)
+
+%% 4.MATRICE RAGGIUNGIBILITA' 
+
+% Analisi della matrice di controllabilità per il sistema lineare continuo
+n = size(A_lin, 1);  % Dimensione dello stato
+m = size(B_lin, 2);  % Dimensione dell'ingresso
+
+% Matrice di controllabilità per il sistema continuo 
+Mr_c = ctrb(A_lin, B_lin);
+
+% Rango della matrice di controllabilità continua
+R_c = rank(Mr_c);
+disp("Analisi Controllabilità Sistema Continuo:")
+disp("Dimensione stato: " + num2str(n))
+disp("Dimensione ingresso: " + num2str(m))
+disp("Rango matrice controllabilità: " + num2str(R_c))
+if R_c == n
+    disp("Il sistema continuo è completamente controllabile")
+else
+    disp("Il sistema continuo NON è completamente controllabile")
+    disp("   Stati non controllabili: " + num2str(n - R_c))
+end
+disp(' ');
+
+% Analisi della matrice di controllabilità per il sistema discreto
+% Matrice di controllabilità per il sistema discreto usando ctrb
+Mr_d = ctrb(A_d, B_d);
+
+% Rango della matrice di controllabilità discreta
+R_d = rank(Mr_d);
+disp(' ');
+disp("Analisi Controllabilità Sistema Discreto:")
+disp("Rango matrice controllabilità: " + num2str(R_d))
+if R_d == n
+    disp("Il sistema discreto è completamente controllabile")
+else
+    disp("Il sistema discreto NON è completamente controllabile")
+    disp("   Stati non controllabili: " + num2str(n - R_d))
+end
+
+% Confronto tra le due matrici di controllabilità
+disp(' ');
+disp("Confronto Matrici di Controllabilità:")
+disp("Rango continuo: " + num2str(R_c))
+disp("Rango discreto: " + num2str(R_d))
+
+if R_c == R_d
+    disp("La discretizzazione mantiene la controllabilità")
+else
+    disp("ATTENZIONE: La discretizzazione ha modificato la controllabilità")
+end
+
+%% 5.VINCOLI
+
+% Vincoli fisici del sistema
+T_v = [300, 282.5];    % [T_max, T_min] - Limiti temperatura (°K)
+Q_v = [150, 0];        % [Q_max, Q_min] - Limiti potenza termosifoni (W)
+U_v = [150, 0];        % [U_max, U_min] - Limiti potenza di riferimento (W)
+
+% Creazione vincoli per stati e ingressi
+% Vincoli stati: [T_max, T_max, T_max, Q_max, Q_max, Q_max, T_min, T_min, T_min, Q_min, Q_min, Q_min]
+X_v = [T_v(1) * ones(3,1);    % Limiti superiori temperature
+          Q_v(1) * ones(3,1);     % Limiti superiori potenze
+          T_v(2) * ones(3,1);     % Limiti inferiori temperature  
+          Q_v(2) * ones(3,1)];    % Limiti inferiori potenze
+
+% Vincoli ingressi: [U_max, U_max, U_max, U_min, U_min, U_min]
+U_v = [U_v(1) * ones(3,1);    % Limiti superiori ingressi
+          U_v(2) * ones(3,1)];    % Limiti inferiori ingressi
+
+% Centratura dei vincoli nel punto di equilibrio
+X_v_lin = X_v - [x_ref; x_ref];  % Vincoli stati centrati
+U_v_lin = U_v - [u_ref; u_ref];  % Vincoli ingressi centrati
+
+% Creazione matrici vincolo per MPC
+Hx = [eye(6); -eye(6)];  % Matrice vincoli stati
+hx = [ones(6,1); -ones(6,1)] .* X_v_lin;  % Vettore vincoli stati
+
+Hu = [eye(3); -eye(3)];  % Matrice vincoli ingressi  
+hu = [ones(3,1); -ones(3,1)] .* U_v_lin;  % Vettore vincoli ingressi
+
+
+
 
 
