@@ -9,7 +9,7 @@ set(0,'defaulttextInterpreter','latex')
 rng('default');
 %% 0.PARAMETRI DELLA CASA
 
-T_ext=273;  %la temperatura esterna, ipotizzata costante
+T_ext=278;  %la temperatura esterna, ipotizzata costante
 
 C1=6300;     % la capacità termica della i-esima stanza
 C2=4600;     

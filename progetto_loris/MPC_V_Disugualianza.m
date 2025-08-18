@@ -125,5 +125,73 @@ for i = 1:n_sim
 end
 %% Plot finale
 
+% Plot diretto senza utilizzare la funzione plotSimulazione
+tempo = htt/60; %[min]
 
-[plot_T  , plot_Q , plot_U] = plotSimulazione(htt , hxx , u_online , x_ref);
+% Configurazione globale per i plot
+set(0, 'DefaultLineLineWidth', 1.5);
+set(0, 'DefaultAxesFontSize', 12);
+set(0, 'DefaultAxesFontWeight', 'bold');
+
+% Prima figura: Evoluzioni degli stati
+figure('Name', 'Evoluzioni degli stati', 'NumberTitle', 'off');
+sgtitle("Evoluzioni degli stati nel tempo", 'FontSize', 16, 'FontWeight', 'bold');
+
+% Subplot per le temperature
+plot_T = subplot(2, 1, 1);
+plot(tempo, hxx(1, :), 'r');  % rosso per T1
+hold on;
+plot(tempo, hxx(2, :), 'g');  % verde per T2
+plot(tempo, hxx(3, :), 'b');  % blu per T3
+yline(x_ref(1), 'Color', 'k', 'LineWidth', 2, 'Label', 'Obiettivo');  % nero per obiettivo
+grid on;
+legend(["T1 - Stanza 1", "T2 - Stanza 2", "T3 - Stanza 3", "Obiettivo"], ...
+       'Location', 'best', 'FontSize', 11, 'FontWeight', 'bold');
+ylabel("Temperatura $[^{\circ}C]$", "Interpreter", "latex", 'FontSize', 12);
+xlabel("Tempo $[min]$", "Interpreter", "latex", 'FontSize', 12);
+title("Evoluzione delle temperature nelle stanze", 'FontSize', 14, 'FontWeight', 'bold');
+ylim([280, 290]);
+xlim([0, max(tempo)]);
+box on;
+
+% Subplot per le potenze termiche
+plot_Q = subplot(2, 1, 2);
+plot(tempo, hxx(4, :), 'r');  % rosso per Q1
+hold on;
+plot(tempo, hxx(5, :), 'g');  % verde per Q2
+plot(tempo, hxx(6, :), 'b');  % blu per Q3
+yline(x_ref(4), 'Color', 'k', 'LineWidth', 2, 'Label', 'Obiettivo');  % nero per obiettivo
+grid on;
+legend(["Q1 - Termosifone 1", "Q2 - Termosifone 2", "Q3 - Termosifone 3", "Obiettivo"], ...
+       'Location', 'best', 'FontSize', 11, 'FontWeight', 'bold');
+ylabel("Potenza termica $[W]$", "Interpreter", "latex", 'FontSize', 12);
+xlabel("Tempo $[min]$", "Interpreter", "latex", 'FontSize', 12);
+title("Evoluzione della potenza termica dei termosifoni", 'FontSize', 14, 'FontWeight', 'bold');
+ylim([0, 120]);
+xlim([0, max(tempo)]);
+box on;
+
+% Seconda figura: Azioni di controllo
+figure('Name', 'Azioni di controllo MPC', 'NumberTitle', 'off');
+plot_U = plot(tempo, u_online(1, :), 'r');  % rosso per Q1
+hold on;
+plot(tempo, u_online(2, :), 'g');  % verde per Q2
+plot(tempo, u_online(3, :), 'b');  % blu per Q3
+grid on;
+title("Azioni di controllo MPC nel tempo", 'FontSize', 16, 'FontWeight', 'bold');
+ylabel("Potenza di controllo $[W]$", "Interpreter", "latex", 'FontSize', 12);
+xlabel("Tempo $[min]$", "Interpreter", "latex", 'FontSize', 12);
+legend(["Q1 - Controllo Stanza 1", "Q2 - Controllo Stanza 2", "Q3 - Controllo Stanza 3"], ...
+       'Location', 'best', 'FontSize', 11, 'FontWeight', 'bold');
+ylim([90, 150]);
+xlim([0, max(tempo)]);
+box on;
+
+
+
+
+
+% Reset delle impostazioni globali
+set(0, 'DefaultLineLineWidth', 'remove');
+set(0, 'DefaultAxesFontSize', 'remove');
+set(0, 'DefaultAxesFontWeight', 'remove');
