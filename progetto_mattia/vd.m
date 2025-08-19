@@ -92,18 +92,29 @@ zlabel("T3 $[ ^{\circ}C]$" , Interpreter="latex")
 % legend(["n-steps" , "Punto di partenza"])
 
 subplot(1 , 2 ,2)
-Np_steps_Q.plot();
+
+% Plot controllable set e salva handle
+h_Np_Q = Np_steps_Q.plot();
+hold on
+
+% Plot CIS e salva handle
+h_CIS_Q = potenze.plot();
+
 title("Potenza termica dei termosifoni")
 xlim(limQ)
 ylim(limQ)
 zlim(limQ)
-trasparenza(0.3)
-hold on
-plot3(x0_centrato(4) ,x0_centrato(5), x0_centrato(6) , "." , MarkerSize=50)
+
+% Trasparenze e colori usando gli handle
+set(h_Np_Q, 'FaceColor', 'red', 'FaceAlpha', 0.3)
+set(h_CIS_Q, 'FaceColor', 'blue', 'FaceAlpha', 0.3)
+
+% Punto di partenza
+plot3(x0_centrato(1) ,x0_centrato(2), x0_centrato(3) , "." , MarkerSize=50)
+
 xlabel("Q1 $[W]$" , Interpreter="latex")
 ylabel("Q2 $[W]$" , Interpreter="latex")
 zlabel("Q3 $[W]$" , Interpreter="latex")
-
 
 
 %------------------------ PROBLEMA ----------------------------------
