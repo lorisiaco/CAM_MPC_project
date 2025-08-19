@@ -98,7 +98,7 @@ x0_centrato = x_start - x_ref;
 %% discretizzazione
 
 % Parametri di discretizzazione
-Ts = 30; 
+Ts = 1; 
 
 % Discretizzazione del sistema lineare usando metodo zero-order hold
 sys_discreto = c2d(sys_lineare, Ts, 'zoh');

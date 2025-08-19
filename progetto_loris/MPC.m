@@ -75,7 +75,7 @@ try
         u_opt = -H \ f';
     end
     
-    % Estrazione della prima azione di controllo
+    % Estrazione della prima azione di controllo (RECEEDING HORIZON
     controlAction = u_opt(1:m);
     flag = 1;
     
