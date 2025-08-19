@@ -28,7 +28,7 @@ CIS_G_Q = projection(CIS_G, 4:6);
 
 figure
 subplot(1, 2, 1)
-CIS_G_T.plot();
+CIS_G_T.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante invece del rosso
 title("Proiezione del CIS delle temperature nelle stanze")
 limitiTemp = [X_v_lin(7), X_v_lin(1)];
 xlim(limitiTemp); ylim(limitiTemp); zlim(limitiTemp);
@@ -37,7 +37,7 @@ ylabel("T2 $[^{\circ}C]$", "Interpreter", "latex")
 zlabel("T3 $[^{\circ}C]$", "Interpreter", "latex")
 
 subplot(1, 2, 2)
-CIS_G_Q.plot();
+CIS_G_Q.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante invece del rosso
 title("Proiezione del CIS della potenza termica dei termosifoni")
 limitiQ = [X_v_lin(10), X_v_lin(4)];
 xlim(limitiQ); ylim(limitiQ); zlim(limitiQ);
@@ -65,29 +65,57 @@ Np_steps_Q = projection(Np_step, 4:6);
 
 figure
 subplot(1, 2, 1)
-Np_steps_T.plot();
+h1 = Np_steps_T.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante
+alpha(h1, 0.3); % Imposta trasparenza
 title("Temperature nelle stanze")
 xlim(limitiTemp); ylim(limitiTemp); zlim(limitiTemp);
-trasparenzaFigura(trasp)
 hold on
-plot3(x0_centrato(1), x0_centrato(2), x0_centrato(3), '.', 'MarkerSize', 50, 'Color', 'r')
+% Punto di partenza
+plot3(x0_centrato(1), x0_centrato(2), x0_centrato(3), '.', 'MarkerSize', 50, 'Color', 'r', 'DisplayName', 'Start Point')
+% Traiettoria simulata (se disponibile)
+if exist('hxx', 'var') && ~isempty(hxx)
+    % Plot della traiettoria delle temperature
+    traj_temp = hxx(1:3, :) - x_ref(1:3);
+    plot3(traj_temp(1, :), traj_temp(2, :), traj_temp(3, :), 'k-', 'LineWidth', 2, 'DisplayName', 'Traiettoria simulata')
+    % Punto finale
+    plot3(traj_temp(1, end), traj_temp(2, end), traj_temp(3, end), 'go', 'MarkerSize', 15, 'MarkerFaceColor', 'g', 'DisplayName', 'Punto finale')
+end
 xlabel("T1 $[^{\circ}C]$", "Interpreter", "latex")
 ylabel("T2 $[^{\circ}C]$", "Interpreter", "latex")
 zlabel("T3 $[^{\circ}C]$", "Interpreter", "latex")
-legend("N-steps controllable set", "Punto di partenza", "Location", "best")
+% Legenda personalizzata per evitare "data1"
+legend_entries = {'N-Steps', 'Start Point'};
+if exist('hxx', 'var') && ~isempty(hxx)
+    legend_entries = [legend_entries, {'Traiettoria simulata', 'Punto finale'}];
+end
+legend(legend_entries, 'Location', 'northeast', 'FontSize', 10)
 hold off
 
 subplot(1, 2, 2)
-Np_steps_Q.plot();
+h2 = Np_steps_Q.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante
+alpha(h2, 0.3); % Imposta trasparenza
 title("Potenza termica dei termosifoni")
 xlim(limitiQ); ylim(limitiQ); zlim(limitiQ);
-trasparenzaFigura(trasp)
 hold on
-plot3(x0_centrato(4), x0_centrato(5), x0_centrato(6), '.', 'MarkerSize', 50, 'Color', 'r')
+% Punto di partenza
+plot3(x0_centrato(4), x0_centrato(5), x0_centrato(6), '.', 'MarkerSize', 50, 'Color', 'r', 'DisplayName', 'Start Point')
+% Traiettoria simulata (se disponibile)
+if exist('hxx', 'var') && ~isempty(hxx)
+    % Plot della traiettoria delle potenze
+    traj_pot = hxx(4:6, :) - x_ref(4:6);
+    plot3(traj_pot(1, :), traj_pot(2, :), traj_pot(3, :), 'k-', 'LineWidth', 2, 'DisplayName', 'Traiettoria simulata')
+    % Punto finale
+    plot3(traj_pot(1, end), traj_pot(2, end), traj_pot(3, end), 'go', 'MarkerSize', 15, 'MarkerFaceColor', 'g', 'DisplayName', 'Punto finale')
+end
 xlabel("Q1 $[W]$", "Interpreter", "latex")
 ylabel("Q2 $[W]$", "Interpreter", "latex")
 zlabel("Q3 $[W]$", "Interpreter", "latex")
-legend("N-steps controllable set", "Punto di partenza", "Location", "best")
+% Legenda personalizzata per evitare "data1"
+legend_entries = {'N-Steps', 'Start Point'};
+if exist('hxx', 'var') && ~isempty(hxx)
+    legend_entries = [legend_entries, {'Traiettoria simulata', 'Punto finale'}];
+end
+legend(legend_entries, 'Location', 'northeast', 'FontSize', 10)
 hold off
 
 %% Simulazione a tempo continuo con MPC
@@ -143,7 +171,7 @@ plot(tempo, hxx(1, :), 'r');  % rosso per T1
 hold on;
 plot(tempo, hxx(2, :), 'g');  % verde per T2
 plot(tempo, hxx(3, :), 'b');  % blu per T3
-yline(x_ref(1), 'Color', 'k', 'LineWidth', 2, 'Label', 'Obiettivo');  % nero per obiettivo
+yline(x_ref(1), 'Color', 'k', 'LineWidth', 0.5, 'Label', 'Obiettivo');  % nero per obiettivo, linea molto sottile
 grid on;
 legend(["T1 - Stanza 1", "T2 - Stanza 2", "T3 - Stanza 3", "Obiettivo"], ...
        'Location', 'best', 'FontSize', 11, 'FontWeight', 'bold');
@@ -160,7 +188,7 @@ plot(tempo, hxx(4, :), 'r');  % rosso per Q1
 hold on;
 plot(tempo, hxx(5, :), 'g');  % verde per Q2
 plot(tempo, hxx(6, :), 'b');  % blu per Q3
-yline(x_ref(4), 'Color', 'k', 'LineWidth', 2, 'Label', 'Obiettivo');  % nero per obiettivo
+yline(x_ref(4), 'Color', 'k', 'LineWidth', 0.5, 'Label', 'Obiettivo');  % nero per obiettivo, linea molto sottile
 grid on;
 legend(["Q1 - Termosifone 1", "Q2 - Termosifone 2", "Q3 - Termosifone 3", "Obiettivo"], ...
        'Location', 'best', 'FontSize', 11, 'FontWeight', 'bold');
