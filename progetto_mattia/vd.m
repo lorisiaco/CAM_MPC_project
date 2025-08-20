@@ -15,11 +15,11 @@ addpath('funzioni');
 main;
 
 % Matrici del costo quadratico
-Q = 1e3*eye(6);
-R = 1e1*eye(3);                
+Q = 100*eye(6);
+R = eye(3);                
+
 % Control invariant set CIS_H*x <= CIS_h
 [CIS_H, CIS_h] = cis(A_d, B_d, zeros(6,1), zeros(3,1), Hx, hx, Hu, hu, Q, R); 
-
 
 CIS_G = Polyhedron(CIS_H, CIS_h);
 
@@ -66,7 +66,7 @@ zlabel("Q3 $[W]$" , Interpreter="latex")
 
 %% set controllabile in N passi
 
-
+%controllable set funzionante
 [Np_steps_H, Np_steps_h] = controllable_set(Hx, hx, Hu, hu, CIS_H, CIS_h, A_d, B_d,50);
 Np_steps_set=Polyhedron('A',Np_steps_H,'b', Np_steps_h)
 Np_step = Polyhedron(Np_steps_H , Np_steps_h);
@@ -116,25 +116,11 @@ xlabel("Q1 $[W]$" , Interpreter="latex")
 ylabel("Q2 $[W]$" , Interpreter="latex")
 zlabel("Q3 $[W]$" , Interpreter="latex")
 
-
-%------------------------ PROBLEMA ----------------------------------
-
-% problema: arrivati qui il programma si blocca senza terminare; 
-% suppongo che il problema nasca dal fatto che fin dalla prima iterazione i
-% vincoli sono veramente tanti (241!).
-% Provando a cambiare parametri come N, Ts, R, Q il risultato rimane
-% invariato...
-
-%--------------------------------------------------------------------
-
-% Intanto che cerco di sistemare questo problema mantengo 
-    Np_steps_H=CIS_H
-    Np_steps_h=CIS_h
-    N=30
+N=25
 
 %% mpc e simulazione
 
-T_sim=1
+T_sim=30
 
 % Riferimento
 x_ref = [289; 289; 289; 100; 100; 100];  % riferimento nel sistema reale
@@ -162,12 +148,14 @@ for tt = 1:T_sim
     % prendo lo stato attuale linearizzato
     x_current = x_log(:, tt);
 
-    x_lin = x_current - [289; 289; 289; 100; 100; 100];
+
+    x_lin = x_current - x_ref;
     x_lin_shifted = x_lin - x_ref_lin;
 
     % Impostare i vincoli MPC in base alla condizione iniziale
     f = mpc.f_base * x_lin_shifted;
     b_ineq = mpc.b_ineq_base - mpc.b_ineq_x0_factor*x_lin_shifted;
+
 
     % risolve il problema di ottimizzazione quadratica
     [delta_u_seq, ~, exitflag] = quadprog(mpc.F, f, mpc.A_ineq, b_ineq);
@@ -177,11 +165,6 @@ for tt = 1:T_sim
     % PRINCIPIO RECEEDING HORIZON
     % in questo caso prendo i primi 3 poichè ho 3 ingressi
     delta_u_seq_first = delta_u_seq(1:3);
-
-    %-------------PROBLEMA-----------------------------
-    % delta_u_seq risulta vuoto, pertanto dice che vado ordine i limiti
-    % dell'array...penso sia perchè quadprog non trova una soluzione
-    % ottima. aumentando il numero di passi (20) però da una soluzione
 
     % il controllo è dato dal riferimento + la variazione ottima
     u_log(:,tt) = u_ref + delta_u_seq_first;
@@ -196,12 +179,12 @@ for tt = 1:T_sim
     % T_ext= temperatura esterna (dai dati)
     % tau= costanti di tempo dei termosifoni
 
-    % dxdt = @(t, x) dinamica_nonlineare(t, x, u_ref, k, k_ext, T_ext, C, tau);
-    % 
-    % 
-    % [~, xx] = ode45(dxdt, [0 Ts], x_current);
-    % 
-    % x_log(:, tt+1) = xx(end, :)';
+    dxdt = @(t, x) dinamica_nonlineare(t, x, u_ref, k, k_ext, T_ext, C, tau);
+
+    [~, xx] = ode45(dxdt, [0 Ts], x_current);
+
+    x_log(:, tt+1) = xx(end, :)';
+    
 
 end
 

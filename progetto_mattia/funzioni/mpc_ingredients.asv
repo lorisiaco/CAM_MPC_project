@@ -8,13 +8,13 @@ n_ter = length(CIS_h); % numero di righe del vincolo terminale
 % Matrice per costo terminale
 [~, P, ~] = dlqr(A, B, Q, R);
 
-%vincoli per lo stato
+
 Hx_shifted = Hx;
-hx_shifted = hx-Hx*x_ref;
+hx_shifted = hx%-Hx*x_ref;
 
 % Vincoli per l'ingresso
 Hu_shifted = Hu;
-hu_shifted = hu-Hu*u_ref;
+hu_shifted = hu%-Hu*u_ref;
 
 % Peso sugli stati
 Q_tilde = kron(eye(Np), Q);

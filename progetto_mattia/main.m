@@ -171,6 +171,9 @@ X_min = [T_min; T_min; T_min; Q_min; Q_min; Q_min];
 
 % Centro i vincoli rispetto al punto di equilibrio (x_ref)
 % Perché stiamo lavorando con deviazioni dal riferimento: x_tilde = x - x_ref
+
+%forse l'errore risiede qui:
+
 X_v_lin_max = X_max - x_ref;  % Vincoli superiori su x_tilde
 X_v_lin_min = X_min - x_ref;  % Vincoli inferiori su x_tilde
 
