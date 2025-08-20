@@ -15,7 +15,7 @@ K = -dlqr(A,B,Q,R);
 %   Matrice A del sistema controllato con LQR
 A_lqr = A+B*K;
 
-%   Vincoli sullo stato e sull'ingresso
+%   Vincoli sullo stato e sull'ingresso, combinati come F*x <=f
 F = [Fx; Fu*K];
 f = [fx; fu + Fu*(K*x_ref - u_ref)];
 
@@ -29,6 +29,12 @@ while CIS_poly_prev.isEmptySet || CIS_poly_prev ~= CIS_poly_curr
     CIS_poly_prev = CIS_poly_curr;
     
     %   Calcola nuovo candidato
+
+    % si calcola un nuovo candidato CIS_poly_curr
+    % questo nuovo insieme deve contenere stati x tali che:
+    % - x soddisfa i vincoli originali ( F*x <= f);
+    % - lo stato successivo x_next= A_lqr*x + B*(u_ref-K*x_ref) deve
+    % appartenere al candidato precedente CIS_ploy_prev. 
     G_hat = [CIS_poly_curr.A * A_lqr; F];
     g_hat = [CIS_poly_prev.b + CIS_poly_curr.A*B*(K*x_ref - u_ref); f];
     CIS_poly_curr = Polyhedron(G_hat,g_hat);

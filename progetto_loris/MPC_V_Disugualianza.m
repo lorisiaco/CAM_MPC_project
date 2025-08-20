@@ -6,7 +6,7 @@
 clear; clc; close all
 
 %% Impostazioni dello script
-Ts = 60; % [secondi] - tempo di campionamento
+Ts = 1; % [secondi] - tempo di campionamento
 
 %% Richiamiamo lo script di inizializzazione
 inizializzazione
@@ -48,7 +48,7 @@ zlabel("Q3 $[W]$", "Interpreter", "latex")
 %% N-step controllable set
 x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 
-% [Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
+ [Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
 Np = 10;
 Np_steps_H = G;
 Np_steps_h = g;

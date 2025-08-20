@@ -2,6 +2,9 @@ function [H_nsteps,h_nsteps] = controllable_set(Hx,hx,Hu,hu,H_target,h_target,A,
 %CONTROLLABLE_SET Calcolo dell'N-step-controllable set ad un set target
 %descritto da H_target * x <= h_target
 
+
+% inizializzo a partire dal set  più piccolo che posso raggiungere
+% L'alogoritmo lavora all'indietro nel tempo, partendo dall'insieme target.
 n = size(A,2);
 m = size(B,2);
 
@@ -9,6 +12,11 @@ m = size(B,2);
 %   stesso.
 H_ii_steps = H_target;
 h_ii_steps = h_target;
+
+% si vuole trovare l'insieme di stati x tali che esista un ingresso u
+% ammissibile (Hu*u<=hu) per cui lo stato x è ammissibile (Hx*x<= hx) e lo
+% staro successivo x_next=A*x + B*u appartiene all'insieme calcolato al
+% passo precedente 
 
 for ii=1:N
     %   Computazione in R^(n+m)

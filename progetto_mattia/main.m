@@ -93,6 +93,8 @@ D_lin = zeros(6, 3);
 
 sys_lineare = ss(A_lin, B_lin, C_lin, D_lin);
 
+% qui dovrei togliere x_ref
+
 x0_centrato = x_start - x_ref;
 
 %% discretizzazione
@@ -172,7 +174,7 @@ X_min = [T_min; T_min; T_min; Q_min; Q_min; Q_min];
 % Centro i vincoli rispetto al punto di equilibrio (x_ref)
 % Perché stiamo lavorando con deviazioni dal riferimento: x_tilde = x - x_ref
 
-%forse l'errore risiede qui:
+%qui dovrei togliere x_ref
 
 X_v_lin_max = X_max - x_ref;  % Vincoli superiori su x_tilde
 X_v_lin_min = X_min - x_ref;  % Vincoli inferiori su x_tilde
@@ -189,6 +191,8 @@ hx = [X_v_lin_max;
 % Costruiamo i vincoli assoluti sugli ingressi
 U_max_vec = [U_max; U_max; U_max];  
 U_min_vec = [U_min; U_min; U_min];  
+
+% qui dovrei togliere u_ref 
 
 % Centro anche i vincoli sugli ingressi rispetto a u_ref
 U_v_lin_max = U_max_vec - u_ref;  % Vincoli superiori su u_tilde

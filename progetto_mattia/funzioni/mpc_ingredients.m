@@ -8,13 +8,24 @@ n_ter = length(CIS_h); % numero di righe del vincolo terminale
 % Matrice per costo terminale
 [~, P, ~] = dlqr(A, B, Q, R);
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DOMANDA: qui sto traslando una seconda volta, la prima viene fatta nel
+% file chiamato "main"
+% mi chiedo quindi se il problema di ottimizzazione non viene risolto
+% proprio perchè a questo punto i vincoli sono troppo stringenti...
+% Andando a commentare le righe 24 e 28 il problema permane, se invece
+% tolgo lo shift nel file "main" il codice si blocca nel calcolo della
+% funzione cis.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %vincoli per lo stato
 Hx_shifted = Hx;
-hx_shifted = hx-Hx*x_ref;
+hx_shifted = hx%-Hx*x_ref; % provato a togliere questo
 
 % Vincoli per l'ingresso
 Hu_shifted = Hu;
-hu_shifted = hu-Hu*u_ref;
+hu_shifted = hu%-Hu*u_ref; %provato a togliere questo
 
 % Peso sugli stati
 Q_tilde = kron(eye(Np), Q);
@@ -43,6 +54,8 @@ end
 %   Matrice hessiana costo quadratico
 F = B_cal'*Q_tilde*B_cal + R_tilde;
 
+
+% VARIANTE: 
 % forzo la simmetria dell'Hessiana per evitare warning
 F=(F+F')/2;
 

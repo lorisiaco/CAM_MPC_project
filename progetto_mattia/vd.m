@@ -89,7 +89,7 @@ xlabel("T1 $[ ^{\circ}C]$" , Interpreter="latex")
 ylabel("T2 $[ ^{\circ}C]$" , Interpreter="latex")
 zlabel("T3 $[ ^{\circ}C]$" , Interpreter="latex")
 
-% legend(["n-steps" , "Punto di partenza"])
+legend(["n-steps" , "Punto di partenza"])
 
 subplot(1 , 2 ,2)
 
@@ -160,6 +160,12 @@ for tt = 1:T_sim
     % risolve il problema di ottimizzazione quadratica
     [delta_u_seq, ~, exitflag] = quadprog(mpc.F, f, mpc.A_ineq, b_ineq);
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % AL MOMENTO NON VIENE FORNITA UNA SOLUZIONE
+
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     flags(tt) = exitflag;
     %trovata una sequenza ottimale di ingressi, prende solo il primo
     % PRINCIPIO RECEEDING HORIZON
@@ -188,3 +194,21 @@ for tt = 1:T_sim
 
 end
 
+%% Plot dei risultati
+%   Traslazione del CIS e dell'N-step set nelle coordinate originali
+CIS_shifted = CIS_G + x_ref;
+Np_step_set_shifted = Np_steps_set + x_ref;
+
+figure(3)
+h_npstep_shited = Np_step_set_shifted.plot('Alpha', 0, 'LineWidth', 2);
+hold on
+h_cis_shifted = CIS_shifted.plot();
+h_traj = plot(x_log(1, :), x_log(2, :), x_log(3,:), 'Color',[0 0 0.5]);
+h_traj_dots = scatter(x_log(1,:),x_log(2,:),'cyan');
+title('Traiettoria del sistema')
+xlabel('$\theta$ [rad]')
+ylabel('$\dot{\theta}$ [rad/s]')
+
+legend([h_cis_shifted, h_npstep_shited, h_traj, h_traj_dots], ...
+    {'CIS', sprintf('%d-step set', N), 'Traiettoria', 'Sample'},...
+    'Interpreter','latex')
