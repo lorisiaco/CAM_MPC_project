@@ -6,13 +6,12 @@
 clear; clc; close all
 
 %% Impostazioni dello script
-Ts = 1; % [secondi] - tempo di campionamento
-
+Ts = 60; % [secondi] - tempo di simulazione
 %% Richiamiamo lo script di inizializzazione
 inizializzazione
 
 %% Definizione delle matrici del costo quadratico
-Q = 1.e3 * eye(6);
+Q = 1.e1 * eye(6);
 R = 1e1 * eye(3);
 % S come soluzione di Riccati
 [~, S] = dlqr(sys_discreto.A, sys_discreto.B, Q, R);
@@ -48,8 +47,8 @@ zlabel("Q3 $[W]$", "Interpreter", "latex")
 %% N-step controllable set
 x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 
- [Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
-Np = 10;
+[Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
+Np = 1
 Np_steps_H = G;
 Np_steps_h = g;
 
@@ -256,45 +255,3 @@ set(0, 'DefaultAxesFontWeight', 'remove');
 % grid on
 % view(3)
 
-%% 4. Plot dei risultati - Impianto termico
-
-% Traslazione del CIS e dell'N-step set nelle coordinate originali
-CIS_shifted = CIS_G + x_ref(1:6);
-Np_step_set_shifted = Np_step + x_ref(1:6);
-
-% Proiezioni (temperature e potenze)
-CIS_T = projection(CIS_shifted, 1:3);
-CIS_Q = projection(CIS_shifted, 4:6);
-Np_T  = projection(Np_step_set_shifted, 1:3);
-Np_Q  = projection(Np_step_set_shifted, 4:6);
-
-% Traiettorie dalle simulazioni
-traj_T = hxx(1:3, :) - x_ref(1:3);   % traiettoria temperature
-traj_Q = hxx(4:6, :) - x_ref(4:6);   % traiettoria potenze
-
-% --- Plot Temperature ---
-figure
-subplot(1,2,1)
-h_nps_T = Np_T.plot('Alpha', 0.1, 'Color',[0.2,0.6,0.8]);
-hold on
-h_cis_T = CIS_T.plot('Color',[0.9,0.3,0.3]);
-plot3(traj_T(1,:), traj_T(2,:), traj_T(3,:), 'k-', 'LineWidth', 2);
-scatter3(traj_T(1,:), traj_T(2,:), traj_T(3,:), 20, 'cyan', 'filled');
-title('Traiettoria delle temperature')
-xlabel('$T_1$ [$^{\circ}C$]', 'Interpreter','latex')
-ylabel('$T_2$ [$^{\circ}C$]', 'Interpreter','latex')
-zlabel('$T_3$ [$^{\circ}C$]', 'Interpreter','latex')
-legend([h_cis_T, h_nps_T], {'CIS', sprintf('%d-step set', Np)}, 'Location','best')
-
-% --- Plot Potenze ---
-subplot(1,2,2)
-h_nps_Q = Np_Q.plot('Alpha', 0.1, 'Color',[0.2,0.6,0.8]);
-hold on
-h_cis_Q = CIS_Q.plot('Color',[0.9,0.3,0.3]);
-plot3(traj_Q(1,:), traj_Q(2,:), traj_Q(3,:), 'k-', 'LineWidth', 2);
-scatter3(traj_Q(1,:), traj_Q(2,:), traj_Q(3,:), 20, 'cyan', 'filled');
-title('Traiettoria delle potenze termiche')
-xlabel('$Q_1$ [W]', 'Interpreter','latex')
-ylabel('$Q_2$ [W]', 'Interpreter','latex')
-zlabel('$Q_3$ [W]', 'Interpreter','latex')
-legend([h_cis_Q, h_nps_Q], {'CIS', sprintf('%d-step set', Np)}, 'Location','best')
