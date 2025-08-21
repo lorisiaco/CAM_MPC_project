@@ -11,7 +11,7 @@ Ts = 60; % [secondi] - tempo di simulazione
 inizializzazione
 
 %% Definizione delle matrici del costo quadratico
-Q = 1.e6 * eye(6);
+Q = 1.e3 * eye(6);
 R = 1e1 * eye(3);
 % S come soluzione di Riccati
 [~, S] = dlqr(sys_discreto.A, sys_discreto.B, Q, R);
@@ -51,8 +51,8 @@ x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 
 %[Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
 Np = 1
-Np_steps_H = G;
-Np_steps_h = g;
+%Np_steps_H = G;
+%Np_steps_h = g;
 
 disp(" ")
 disp("Passi minimi per entrare nel CIS: " + Np);
