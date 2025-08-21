@@ -45,7 +45,7 @@ x_start=[T1 T2 T3 Q1 Q2 Q3]';
 x_ref=[289 289 289 100 100 100]';
 u_ref=[100 100 100]';       
 
-%% 1.ODE SISTEMA
+%% 1.SIMULAZIONE DEL SISTEMA
 dxdt = @(t,x) CasaEsterno(t, x, k, C, tau, T_ext, k_ext, u_ref);
 
 simulazione = 80 * 60;
@@ -57,7 +57,7 @@ hold on
 
 tt = tt/60;
 
-sgtitle("Simulazione del sistema con u di 100W") 
+
 
 subplot(2,1,1)
 plot(tt, xx(:,1), 'r', ...    % rosso per T1
@@ -98,8 +98,8 @@ f4 = (Q1r - Q1) / tau(1);
 f5 = (Q2r - Q2) / tau(2);
 f6 = (Q3r - Q3) / tau(3);
 
-F = [f1; f2; f3; f4; f5; f6];
-X = [T1 T2 T3 Q1 Q2 Q3];
+F = [f1; f2; f3; f4; f5; f6]; %Equazioni dinamiche + dinamica termosifoni
+X = [T1 T2 T3 Q1 Q2 Q3];      %Valori dalla tabella condizioni iniziali
 U = [Q1r Q2r Q3r];
 
 A_sym(X) = jacobian(F, X);      % derivata di F rispetto agli stati

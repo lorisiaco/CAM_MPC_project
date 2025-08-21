@@ -50,5 +50,4 @@ function [H_nsteps, h_nsteps , Np] = CS(Hx, hx, Hu, hu, G, g, A, B, point)
     H_nsteps = temp.A;
     h_nsteps = temp.b;
     
-    
 end
