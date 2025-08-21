@@ -11,7 +11,7 @@ Ts = 60; % [secondi] - tempo di simulazione
 inizializzazione
 
 %% Definizione delle matrici del costo quadratico
-Q = 1.e1 * eye(6);
+Q = 1.e6 * eye(6);
 R = 1e1 * eye(3);
 % S come soluzione di Riccati
 [~, S] = dlqr(sys_discreto.A, sys_discreto.B, Q, R);
@@ -47,7 +47,9 @@ zlabel("Q3 $[W]$", "Interpreter", "latex")
 %% N-step controllable set
 x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 
-[Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
+[Np_steps_H, Np_steps_h] = controllable_set(Hx, hx, Hu, hu, G, g, A_d, B_d,50);
+
+%[Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
 Np = 1
 Np_steps_H = G;
 Np_steps_h = g;
@@ -223,35 +225,4 @@ set(0, 'DefaultLineLineWidth', 'remove');
 set(0, 'DefaultAxesFontSize', 'remove');
 set(0, 'DefaultAxesFontWeight', 'remove');
 
-
-%------------------------------------------------------------------
-%grafico in più
-
-
-% % Traslazione del CIS e del set N-step nelle coordinate originali
-% CIS_shifted = CIS_G + x_ref;  % x_ref è [289;289;289;100;100;100]
-% Np_step_set_shifted = Polyhedron(Np_steps_H, Np_steps_h) + x_ref;
-% 
-% % Proiezioni sui soli stati T1, T2, T3 (coordinate 1, 2, 3)
-% cis_temp = projection(CIS_shifted, [1 2 3]);
-% Np_step_temp = projection(Np_step_set_shifted, [1 2 3]);
-% 
-% figure
-% h_npstep = Np_step_temp.plot('Alpha', 0.05, 'LineWidth', 2, 'EdgeColor', 'blue');
-% hold on
-% h_cis = cis_temp.plot('Alpha', 0.1, 'EdgeColor', 'black');
-% h_traj = plot3(x_log(1, :), x_log(2, :), x_log(3, :), 'Color', [0 0 0.5]);
-% h_dots = scatter3(x_log(1,:), x_log(2,:), x_log(3,:), 30, 'cyan', 'filled');
-% 
-% title('Traiettoria del sistema termico')
-% xlabel('$T_1$ [$^\circ$C]', 'Interpreter', 'latex')
-% ylabel('$T_2$ [$^\circ$C]', 'Interpreter', 'latex')
-% zlabel('$T_3$ [$^\circ$C]', 'Interpreter', 'latex')
-% 
-% legend([h_cis, h_npstep, h_traj, h_dots], ...
-%     {'CIS', sprintf('%d-step set', N), 'Traiettoria', 'Campioni'}, ...
-%     'Interpreter','latex')
-% 
-% grid on
-% view(3)
 
