@@ -1,22 +1,18 @@
-% In questo script valutiamo MPC con vincolo di disuguaglianza, quindi con un control invariant set (CIS)
-% * Se Q > 1e2 probabilmente il calcolo del N Steps controllable set si
-% blocca quindi in quel caso saltare la parte e impostare manualmente i
-% passi facendo: Np = #passi
+clear; 
+clc; 
+close all
 
-clear; clc; close all
-
-%% Impostazioni dello script
+%% Tempo di Simulazione
 Ts = 60; % [secondi] - tempo di simulazione
-%% Richiamiamo lo script di inizializzazione
+%% Richiamo file inizializzazione per le variabili
 inizializzazione
 
-%% Definizione delle matrici del costo quadratico
+%% Definizione Q,R ed S
 Q = 1.e3 * eye(6);
 R = 1e1 * eye(3);
-% S come soluzione di Riccati
-[~, S] = dlqr(sys_discreto.A, sys_discreto.B, Q, R);
+[~, S] = dlqr(sys_discreto.A, sys_discreto.B, Q, R); % S da Riccati
 
-%% Verifica dell'esistenza del Controllable Invariant Set
+%% Esistenza del Controllable Invariant Set
 [G, g] = CIS(sys_discreto.A, sys_discreto.B, zeros(6,1), zeros(3,1), Hx, hx, Hu, hu, Q, R);
 
 %% Plot del CIS
@@ -44,13 +40,13 @@ xlabel("Q1 $[W]$", "Interpreter", "latex")
 ylabel("Q2 $[W]$", "Interpreter", "latex")
 zlabel("Q3 $[W]$", "Interpreter", "latex")
 
-%% N-step controllable set
+%% N-step CS
 x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 
 [Np_steps_H, Np_steps_h] = controllable_set(Hx, hx, Hu, hu, G, g, A_d, B_d,50);
 
 %[Np_steps_H, Np_steps_h, Np] = CS(Hx, hx, Hu, hu, G, g, sys_discreto.A, sys_discreto.B, x0_centrato);
-Np = 1
+Np = 1; %%PER MATTIA, Np te la deve ritornare controllable_set
 %Np_steps_H = G;
 %Np_steps_h = g;
 
@@ -58,7 +54,6 @@ disp(" ")
 disp("Passi minimi per entrare nel CIS: " + Np);
 
 %% Verifica fattibilità dal punto di partenza
-trasp = 0.3; %togliere serve per le fugure
 Np_step = Polyhedron(Np_steps_H, Np_steps_h);
 Np_step = Np_step.minHRep();
 Np_steps_T = projection(Np_step, 1:3);
@@ -154,7 +149,6 @@ for i = 1:n_sim
 end
 %% Plot finale
 
-% Plot diretto senza utilizzare la funzione plotSimulazione
 tempo = htt/60; %[min]
 
 % Configurazione globale per i plot

@@ -264,3 +264,4 @@ fprintf('\n=== ANALISI COMPLETATA ===\n');
 fprintf('I plot mostrano il confronto tra le tre implementazioni MPC.\n');
 fprintf('MPC_prova utilizza l''approccio basato su mpc_ingredients.m\n');
 fprintf('mentre MPC e MPCc utilizzano l''approccio tradizionale.\n');
+
