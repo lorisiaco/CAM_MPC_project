@@ -5,7 +5,7 @@ clear; clc; close all
 inizializzazione
 
 %% Definizione delle matrici del costo quadratico
-Np=10; %orizzonte di predizione
+Np=30; %orizzonte di predizione
 Tsim=20; %tempo di simulazione
 Q = 1e3 * eye(6);
 R = 1e1 * eye(3);
