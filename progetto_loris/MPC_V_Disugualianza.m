@@ -1,6 +1,5 @@
+
 clear; clc; close all
-
-
 
 %% Richiamiamo lo script di inizializzazione
 inizializzazione
@@ -14,6 +13,7 @@ R = 1.e1 * eye(3);
 
 %% Verifica dell'esistenza del Controllable Invariant Set
 [G, g] = cis2(sys_discreto.A, sys_discreto.B, zeros(6,1), zeros(3,1), Hx, hx, Hu, hu, Q, R);
+
 
 %% Plot del CIS
 CIS_G = Polyhedron(G, g);
@@ -40,7 +40,7 @@ xlabel("Q1 $[W]$", "Interpreter", "latex")
 ylabel("Q2 $[W]$", "Interpreter", "latex")
 zlabel("Q3 $[W]$", "Interpreter", "latex")
 
-%% N-step controllable set
+%% N-step CS
 x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 
 %% Verifica fattibilità dal punto di partenza
@@ -49,8 +49,10 @@ x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 [Np_steps_H, Np_steps_h] = controllable_set2(Hx, hx, Hu, hu, G, g, A_d, B_d,50);
 Np_steps_set=Polyhedron('A',Np_steps_H,'b', Np_steps_h)
 Np_step = Polyhedron(Np_steps_H , Np_steps_h);
-Np_step = Np_step.minHRep();
 
+%% Verifica fattibilità dal punto di partenza
+Np_step = Polyhedron(Np_steps_H, Np_steps_h);
+Np_step = Np_step.minHRep();
 Np_steps_T = projection(Np_step , 1:3);
 Np_steps_Q = projection(Np_step , 4:6);
 
@@ -135,7 +137,6 @@ for i = 1:Tsim
 end
 %% Plot finale
 
-% Plot diretto senza utilizzare la funzione plotSimulazione
 tempo = htt/60; %[min]
 
 % Configurazione globale per i plot

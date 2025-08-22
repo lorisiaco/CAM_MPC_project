@@ -151,3 +151,4 @@ fprintf('Fallimenti: %d/%d (%.1f%%)\n', fallimenti, n_sim, 100*fallimenti/n_sim)
 set(0, 'DefaultLineLineWidth', 'remove');
 set(0, 'DefaultAxesFontSize', 'remove');
 set(0, 'DefaultAxesFontWeight', 'remove');
+
