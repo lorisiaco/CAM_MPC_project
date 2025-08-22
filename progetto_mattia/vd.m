@@ -116,7 +116,7 @@ xlabel("Q1 $[W]$" , Interpreter="latex")
 ylabel("Q2 $[W]$" , Interpreter="latex")
 zlabel("Q3 $[W]$" , Interpreter="latex")
 
-N=25
+N=50
 
 %% mpc e simulazione
 

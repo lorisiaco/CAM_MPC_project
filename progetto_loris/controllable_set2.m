@@ -1,4 +1,4 @@
-function [H_nsteps,h_nsteps] = controllable_set(Hx,hx,Hu,hu,H_target,h_target,A,B,N)
+function [H_nsteps,h_nsteps] = controllable_set2(Hx,hx,Hu,hu,H_target,h_target,A,B,N)
 %CONTROLLABLE_SET Calcolo dell'N-step-controllable set ad un set target
 %descritto da H_target * x <= h_target
 

@@ -123,7 +123,7 @@ disp(eig(A_lin))
 %% 3.DISCRETIZZAZIONE DEL SISTEMA
 
 % Parametri di discretizzazione
-Ts = 60;  % Periodo di campionamento in secondi (1 minuto)
+Ts = 1;  % Periodo di campionamento in secondi (1 minuto)
 
 % Discretizzazione del sistema lineare usando metodo zero-order hold
 sys_discreto = c2d(sys_lineare, Ts, 'zoh');
