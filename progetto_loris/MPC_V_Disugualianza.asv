@@ -5,10 +5,9 @@ clear; clc; close all
 inizializzazione
 
 %% Definizione delle matrici del costo quadratico
-Np=10; %orizzonte di predizione
-Tsim=20; %tempo di simulazione
-Q = 1e3 * eye(6);
-R = 1e1 * eye(3);
+Tsim=50 %tempo di simulazione
+Q = 1.e3 * eye(6);
+R = 1.e1 * eye(3);
 % S come soluzione di Riccati
 [~, S] = dlqr(sys_discreto.A, sys_discreto.B, Q, R);
 
@@ -47,7 +46,7 @@ x0_centrato = [284; 285; 284; 0; 10; 0] - x_ref(1:6);
 %% Verifica fattibilità dal punto di partenza
 
 %grafici sovrapposti
-[Np_steps_H, Np_steps_h] = controllable_set2(Hx, hx, Hu, hu, G, g, A_d, B_d,Np);
+[Np_steps_H, Np_steps_h] = controllable_set2(Hx, hx, Hu, hu, G, g, A_d, B_d,50);
 Np_steps_set=Polyhedron('A',Np_steps_H,'b', Np_steps_h)
 Np_step = Polyhedron(Np_steps_H , Np_steps_h);
 
@@ -104,18 +103,21 @@ hold off
 
 %% Simulazione a tempo continuo con MPC
 
+if ~exist("Np" , "var")
+    Np = 50;
+end
+
 htt=[];
 hxx = [];
 u_online = [];
 x_ini = [284 285 284 0 10 0]';
 flag = zeros(1 , Np);
-nsim=100;
 
 
 [A_cal , A_cal_n , B_cal , B_cal_n,  Q_cal , R_cal] = Calligrafica(sys_discreto.A , sys_discreto.B , Q , R , S , Np);
 
 
-for i = 1:nsim
+for i = 1:Tsim
 
     if i == 1
         x_run = x_ini-x_ref(1:6);
