@@ -28,7 +28,7 @@ CIS_G_Q = projection(CIS_G, 4:6);
 
 figure
 subplot(1, 2, 1)
-CIS_G_T.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante invece del rosso
+CIS_G_T.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante 
 title("Proiezione del CIS delle temperature nelle stanze")
 limitiTemp = [X_v_lin(7), X_v_lin(1)];
 xlim(limitiTemp); ylim(limitiTemp); zlim(limitiTemp);
@@ -37,7 +37,7 @@ ylabel("T2 $[^{\circ}C]$", "Interpreter", "latex")
 zlabel("T3 $[^{\circ}C]$", "Interpreter", "latex")
 
 subplot(1, 2, 2)
-CIS_G_Q.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante invece del rosso
+CIS_G_Q.plot('Color', [0.2, 0.6, 0.8]); % Colore blu elegante 
 title("Proiezione del CIS della potenza termica dei termosifoni")
 limitiQ = [X_v_lin(10), X_v_lin(4)];
 xlim(limitiQ); ylim(limitiQ); zlim(limitiQ);
@@ -57,7 +57,6 @@ disp(" ")
 disp("Passi minimi per entrare nel CIS: " + Np);
 
 %% Verifica fattibilità dal punto di partenza
-trasp = 0.3; %togliere serve per le fugure
 Np_step = Polyhedron(Np_steps_H, Np_steps_h);
 Np_step = Np_step.minHRep();
 Np_steps_T = projection(Np_step, 1:3);
